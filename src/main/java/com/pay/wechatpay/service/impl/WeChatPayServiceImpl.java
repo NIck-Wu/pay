@@ -20,6 +20,7 @@ import com.pay.validateHelper.DateUtils;
 import com.pay.wechatpay.service.WeChatPayService;
 import com.pay.wechatpay.wxpayutil.WxPayApi;
 import com.pay.wechatpay.wxpayutil.WxPayApi.TradeType;
+import com.pay.wechatpay.wxpayutil.WxPayApiBaseConfig;
 import com.pay.wechatpay.wxpayutil.WxPayApiConfig;
 import com.utils.ResponseResult;
 
@@ -164,16 +165,16 @@ public class WeChatPayServiceImpl implements WeChatPayService {
 	 */
 	@Override
 	public ResponseResult<JSONObject> appPushOrder(JSONObject request) {
-
+		System.out.println(request.toJSONString());
 		WxPayApiConfig wxPayParm = buildWxPayApiConfig(request);
 		boolean isSandbox = wxPayParm.isSandbox();
 		wxPayParm.setTradeType(TradeType.APP);
-		Map<String, String> params = wxPayParm.build();  /** 参数转换为Map格式*/
-		logger.info("调用微信统一下单接口最终Map参数："+ params.toString());
-		
-		String xmlResult = WxPayApi.pushOrder(isSandbox, params); /** 调用微信统一下单接口*/
+		Map<String, String> params = wxPayParm.build(); /** 参数转换为Map格式 */
+		logger.info("调用微信统一下单接口最终Map参数：" + params.toString());
+
+		String xmlResult = WxPayApi.pushOrder(isSandbox, params); /** 调用微信统一下单接口 */
 		Map<String, String> resultMap = PaymentKit.xmlToMap(xmlResult);
-		
+
 		ResponseResult<JSONObject> response = new ResponseResult<JSONObject>();
 
 		String return_code = resultMap.get("return_code");
@@ -183,19 +184,18 @@ public class WeChatPayServiceImpl implements WeChatPayService {
 			response.setErrorMsg(return_msg);
 			return response;
 		}
-		
+
 		String result_code = resultMap.get("result_code");
 		if (!PaymentKit.codeIsOK(result_code)) {
 			String err_code_des = resultMap.get("err_code_des");
 			String err_code = resultMap.get("err_code");
 			response.setErrorCode(result_code);
-			response.setErrorMsg("err_code:" + err_code + " err_code_des:"
-					+ err_code_des);
+			response.setErrorMsg("err_code:" + err_code + " err_code_des:" + err_code_des);
 			return response;
 		}
-		
-		/**以下字段在return_code 和result_code都为SUCCESS的时候有返回 */
-		String prepay_id = resultMap.get("prepay_id");	
+
+		/** 以下字段在return_code 和result_code都为SUCCESS的时候有返回 */
+		String prepay_id = resultMap.get("prepay_id");
 		Map<String, String> packageParams = new HashMap<String, String>();
 		packageParams.put("appid", wxPayParm.getAppId());
 		packageParams.put("partnerid", wxPayParm.getMchId());
@@ -203,8 +203,7 @@ public class WeChatPayServiceImpl implements WeChatPayService {
 		packageParams.put("package", "Sign=WXPay");
 		packageParams.put("noncestr", System.currentTimeMillis() + "");
 		packageParams.put("timestamp", System.currentTimeMillis() / 1000 + "");
-		String packageSign = PaymentKit.createSign(packageParams,
-				wxPayParm.getPaternerKey()); // 二次签名
+		String packageSign = PaymentKit.createSign(packageParams, wxPayParm.getPaternerKey()); // 二次签名
 		packageParams.put("sign", packageSign);
 
 		String jsonStr = JSON.toJSONString(packageParams);
@@ -1051,10 +1050,9 @@ public class WeChatPayServiceImpl implements WeChatPayService {
 	 * @param request
 	 * @return
 	 */
-	@SuppressWarnings("null")
 	private WxPayApiConfig buildWxPayApiConfig(JSONObject request) {
-		WxPayApiConfig wxPayApiConfig = null;
-		String appid = request.getString("appid");
+		WxPayApiConfig wxPayApiConfig = new WxPayApiConfig();
+		String appid = request.getString("appId");
 		String mch_id = request.getString("mchId");
 		String notify_url = request.getString("notifyUrl");
 		String outTradeNo = request.getString("outTradeNo");// 商户订单号

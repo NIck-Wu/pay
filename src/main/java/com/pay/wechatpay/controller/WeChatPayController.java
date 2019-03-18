@@ -42,7 +42,7 @@ public class WeChatPayController {
 		logger.info("request==="+request.toJSONString());
 		//参数校验
 		//notifyURL 为支付模块回调业务模块的地址，微信回调地址由模块服务自身提供  app下单
-		ValidateHelper.validateNull(request, new String[]{"accountCode","outTradeNo","totalFee","notifyURL"});
+//		ValidateHelper.validateNull(request, new String[]{"appId","outTradeNo","totalFee","notifyURL","mchId"});
 		return weChatPayService.appPushOrder(request);
 	}
 	/**

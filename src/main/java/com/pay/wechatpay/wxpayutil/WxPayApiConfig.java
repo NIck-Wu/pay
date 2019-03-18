@@ -46,7 +46,7 @@ public class WxPayApiConfig extends WxPayApiBaseConfig implements Serializable {
 	private String timeStart;
 	private String timeExpire;
 
-	private WxPayApiConfig() {
+	public WxPayApiConfig() {
 
 	}
 
