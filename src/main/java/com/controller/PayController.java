@@ -15,18 +15,68 @@ import com.utils.ResponseResult;
 public class PayController {
 	@Autowired
 	private WeChatPayService wxChatPayService;
-		/**
-		 * 查询
-		 * 
-		 * @param user
-		 * @return
-		 * @return
-		 * @throws Exception
-		 */
-		@RequestMapping(value = "wechatpay", method = RequestMethod.POST)
-		public ResponseResult<JSONObject> wechatpay(@RequestBody JSONObject jsonObject){
-			return wxChatPayService.appPushOrder(jsonObject);
-		}
 
+	/**
+	 * 微信jsapi支付
+	 * 
+	 * @param jsonObject
+	 * @return
+	 */
+	@RequestMapping(value = "wechatJsApiPay", method = RequestMethod.POST)
+	public ResponseResult<JSONObject> wechatJsApiPay(@RequestBody JSONObject jsonObject) {
 
+		return wxChatPayService.jsAPIPushOrder(jsonObject);
+
+	}
+	
+	/**
+	 * 微信APP支付
+	 * 
+	 * @param jsonObject
+	 * @return
+	 */
+	@RequestMapping(value = "wechatAppPay", method = RequestMethod.POST)
+	public ResponseResult<JSONObject> wechatAppPay(@RequestBody JSONObject jsonObject) {
+
+		return wxChatPayService.jsAPIPushOrder(jsonObject);
+
+	}
+	
+	/**
+	 * 微信H5支付
+	 * 
+	 * @param jsonObject
+	 * @return
+	 */
+	@RequestMapping(value = "wechatH5Pay", method = RequestMethod.POST)
+	public ResponseResult<JSONObject> wechatH5Pay(@RequestBody JSONObject jsonObject) {
+
+		return wxChatPayService.jsAPIPushOrder(jsonObject);
+
+	}
+	/**
+	 * 微信订单查询
+	 * 
+	 * @param jsonObject
+	 * @return
+	 */
+	@RequestMapping(value = "wechatOrderQuery", method = RequestMethod.POST)
+	public ResponseResult<JSONObject> wechatOrderQuery(@RequestBody JSONObject jsonObject) {
+
+		return wxChatPayService.jsAPIPushOrder(jsonObject);
+
+	}
+	/**
+	 * 微信订单查询
+	 * 
+	 * @param jsonObject
+	 * @return
+	 */
+	@RequestMapping(value = "wechatOrderRefund", method = RequestMethod.POST)
+	public ResponseResult<JSONObject> wechatOrderRefund(@RequestBody JSONObject jsonObject) {
+
+		return wxChatPayService.jsAPIPushOrder(jsonObject);
+
+	}
+	
 }

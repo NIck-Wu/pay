@@ -217,65 +217,58 @@ public class WeChatPayServiceImpl implements WeChatPayService {
 	 * @param request
 	 * @return
 	 */
-//	@Override
-//	public ResponseResult<JSONObject> h5PushOrder(JSONObject request) {
-//		// TODO Auto-generated method stub
-//		WxPayApiConfig wxPayApiConfig = buildWxPayApiConfig(request);
-//		String accountCode = request.getString("accountCode");
-//		String outTradeNo = request.getString("outTradeNo");
-//		String totalFee = request.getString("totalFee");
-//		String buNotifyURL = request.getString("notifyURL");
-//		boolean isSandbox = wxPayApiConfig.isSandbox();
-//		String sceneInfo = request.getString("sceneInfo");
-//		String timeExpire = wxPayApiConfig.getTimeExpire();
-//		wxPayApiConfig.setTradeType(TradeType.MWEB);
-//		wxPayApiConfig.setSceneInfo(sceneInfo);
-//		Map<String, String> params = wxPayApiConfig.build();
-//
-//		String xmlResult = WxPayApi.pushOrder(isSandbox, params);
-//
-//		Map<String, String> resultMap = PaymentKit.xmlToMap(xmlResult);
-//		ResponseResult<JSONObject> response = new ResponseResult<JSONObject>();
-//
-//		String return_code = resultMap.get("return_code");
-//		String return_msg = resultMap.get("return_msg");
-//		if (!PaymentKit.codeIsOK(return_code)) {
-//			logger.info(xmlResult);
-//			response.setErrorCode(return_code);
-//			response.setErrorMsg(return_msg);
-//			return response;
-//		}
-//		String result_code = resultMap.get("result_code");
-//		if (!PaymentKit.codeIsOK(result_code)) {
-//			logger.info(xmlResult);
-//			response.setErrorCode(result_code);
-//			return response;
-//		}
-//		String prepay_id = resultMap.get("prepay_id");
-//		Map<String, String> packageParams = new HashMap<String, String>();
-//		packageParams.put("appId", wxPayApiConfig.getAppId());
-//		packageParams.put("partnerId", wxPayApiConfig.getMchId());
-//		packageParams.put("prepayId", prepay_id);
-//		packageParams.put("package", "Sign=WXPay");
-//		packageParams.put("nonceStr", System.currentTimeMillis() + "");
-//		packageParams.put("timeStamp", System.currentTimeMillis() / 1000 + "");
-//		String packageSign = PaymentKit.createSign(packageParams,
-//				wxPayApiConfig.getPaternerKey());
-//		packageParams.put("sign", packageSign);
-//
-//		String jsonStr = JSON.toJSONString(packageParams);
-//		JSONObject result = JSONObject.parseObject(jsonStr);
-//		result.put("mwebUrl", resultMap.get("mweb_url"));
-//		response.setData(result);
-//
-//		// 存储支付记录表 TODO start========================================
-//		PayRecordDto payRecordDto = buildPayRecord(outTradeNo, accountCode,
-//				totalFee, buNotifyURL, PayMethodEnum.WAP.getCode(), prepay_id,
-//				null, timeExpire);
-//		payRecordService.save(payRecordDto);
-//		// 存储支付记录表 end========================================
-//		return response;
-//	}
+	@Override
+	public ResponseResult<JSONObject> h5PushOrder(JSONObject request) {
+		WxPayApiConfig wxPayApiConfig = buildWxPayApiConfig(request);
+		String outTradeNo = request.getString("outTradeNo");
+		String totalFee = request.getString("totalFee");
+		String buNotifyURL = request.getString("notifyURL");
+		boolean isSandbox = wxPayApiConfig.isSandbox();
+		String sceneInfo = request.getString("sceneInfo");
+		String timeExpire = wxPayApiConfig.getTimeExpire();
+		wxPayApiConfig.setTradeType(TradeType.MWEB);
+		wxPayApiConfig.setSceneInfo(sceneInfo);
+		Map<String, String> params = wxPayApiConfig.build();
+
+		String xmlResult = WxPayApi.pushOrder(isSandbox, params);
+
+		Map<String, String> resultMap = PaymentKit.xmlToMap(xmlResult);
+		ResponseResult<JSONObject> response = new ResponseResult<JSONObject>();
+
+		String return_code = resultMap.get("return_code");
+		String return_msg = resultMap.get("return_msg");
+		if (!PaymentKit.codeIsOK(return_code)) {
+			logger.info(xmlResult);
+			response.setErrorCode(return_code);
+			response.setErrorMsg(return_msg);
+			return response;
+		}
+		String result_code = resultMap.get("result_code");
+		if (!PaymentKit.codeIsOK(result_code)) {
+			logger.info(xmlResult);
+			response.setErrorCode(result_code);
+			return response;
+		}
+		String prepay_id = resultMap.get("prepay_id");
+		Map<String, String> packageParams = new HashMap<String, String>();
+		packageParams.put("appId", wxPayApiConfig.getAppId());
+		packageParams.put("partnerId", wxPayApiConfig.getMchId());
+		packageParams.put("prepayId", prepay_id);
+		packageParams.put("package", "Sign=WXPay");
+		packageParams.put("nonceStr", System.currentTimeMillis() + "");
+		packageParams.put("timeStamp", System.currentTimeMillis() / 1000 + "");
+		String packageSign = PaymentKit.createSign(packageParams, wxPayApiConfig.getPaternerKey());
+		packageParams.put("sign", packageSign);
+
+		String jsonStr = JSON.toJSONString(packageParams);
+		JSONObject result = JSONObject.parseObject(jsonStr);
+		result.put("mwebUrl", resultMap.get("mweb_url"));
+		response.setData(result);
+
+		// 存储支付记录表 TODO start========================================
+		// 存储支付记录表 end========================================
+		return response;
+	}
 
 	/**
 	 * 微信公众号下单
@@ -288,8 +281,8 @@ public class WeChatPayServiceImpl implements WeChatPayService {
 		WxPayApiConfig wxPayApiConfig = buildWxPayApiConfig(request);
 		boolean isSandbox = wxPayApiConfig.isSandbox();
 		wxPayApiConfig.setTradeType(TradeType.JSAPI);
-		String openId = request.getString("openId"); 
-		wxPayApiConfig.setOpenId(openId);//公众号openID
+		String openId = request.getString("openId");
+		wxPayApiConfig.setOpenId(openId);// 公众号openID
 		Map<String, String> params = wxPayApiConfig.build();
 		String xmlResult = WxPayApi.pushOrder(isSandbox, params);
 
@@ -318,12 +311,12 @@ public class WeChatPayServiceImpl implements WeChatPayService {
 		String appId = request.getString("appId");// "wxafe7f0fac1c27836";
 		configMap.put("appId", appId);
 		configMap.put("timeStamp", timestamp);
+//		configMap.put("openid", openId);
 		configMap.put("nonceStr", nonceStr);
 		configMap.put("signType", "MD5");
 		String package1 = "prepay_id=" + prepay_id;
 		configMap.put("package", package1);
-		String paySign = PaymentKit.createSign(configMap,
-				wxPayApiConfig.getPaternerKey());
+		String paySign = PaymentKit.createSign(configMap, wxPayApiConfig.getPaternerKey());
 		configMap.put("sign", paySign);
 
 		String jsonStr = JSON.toJSONString(configMap);
@@ -1043,7 +1036,7 @@ public class WeChatPayServiceImpl implements WeChatPayService {
 //		response.setData(data);
 //		return response;
 //	}
-	
+
 	/**
 	 * 组装支付参数
 	 * 
@@ -1090,6 +1083,7 @@ public class WeChatPayServiceImpl implements WeChatPayService {
 			wxPayApiConfig.setTimeExpire(timeExpire);
 		}
 
+		wxPayApiConfig.setPaternerKey("s5vFlSQbm7qL7688jBPcoF0Ewrh0ePnN");// TODO
 		wxPayApiConfig.setAppId(appid);
 		wxPayApiConfig.setMchId(mch_id);
 		wxPayApiConfig.setNotifyUrl(notify_url);
